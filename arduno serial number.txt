@@ -1,0 +1,44 @@
+const int segmentPins[] = {2, 3, 4, 5, 6, 7, 8, 9}; // กำหนดพินที่เชื่อมต่อกับ 7-segment
+const int numSegments = 8; // จำนวนขาของ 7-segment
+const int digitPins[] = {10}; // กำหนดพินที่เชื่อมต่อกับ digit (หลอด)
+
+void setup() {
+  Serial.begin(9600);
+  for (int i = 0; i < numSegments; ++i) {
+    pinMode(segmentPins[i], OUTPUT);
+  }
+
+  pinMode(digitPins[0], OUTPUT); // ใช้ได้เฉพาะตัวที่ 0 เท่านั้น
+}
+
+void displayDigit(int digit) {
+  const int segments[10][8] = {
+    {1, 1, 1, 1, 1, 1, 0, 0}, // 0
+    {0, 1, 1, 0, 0, 0, 0, 0}, // 1
+    {1, 1, 0, 1, 1, 0, 1, 0}, // 2
+    {1, 1, 1, 1, 0, 0, 1, 0}, // 3
+    {0, 1, 1, 0, 0, 1, 1, 0}, // 4
+    {1, 0, 1, 1, 0, 1, 1, 0}, // 5
+    {1, 0, 1, 1, 1, 1, 1, 0}, // 6
+    {1, 1, 1, 0, 0, 0, 0, 0}, // 7
+    {1, 1, 1, 1, 1, 1, 1, 0}, // 8
+    {1, 1, 1, 1, 0, 1, 1, 0}  // 9
+  };
+
+  for (int i = 0; i < numSegments; ++i) {
+    digitalWrite(segmentPins[i], segments[digit][i]);
+  }
+}
+
+void loop() {
+  // อ่านค่าจากคอมพิวเตอร์ (ในที่นี้คือจำลองค่าเพื่อให้ง่าย)
+  int valueFromComputer = Serial.read() - '0'; // แปลง char เป็น int
+  if (valueFromComputer >= 0 && valueFromComputer <= 9) {
+    displayDigit(valueFromComputer);
+  }
+
+  // เลือกหลอดที่จะเปิด
+  digitalWrite(digitPins[0], LOW);
+
+  delay(2000); // หน่วงเวลาเพื่อให้ค่าที่แสดงผลมีความเป็นจริง
+}
